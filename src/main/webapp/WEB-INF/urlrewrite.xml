@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN" "urlrewrite4.0.dtd">
+<urlrewrite>
+	<rule match-type="regex">
+		<from>/resource/(.*)$</from>
+		<to last="true" type="forward">/resource/$1</to>
+	</rule>
+	<rule match-type="regex">
+		<from>/css/(.*)$</from>
+		<to last="true" type="forward">/css/$1</to>
+	</rule>
+	<rule match-type="regex">
+		<from>/js/(.*)$</from>
+		<to last="true" type="forward">/js/$1</to>
+	</rule>
+	<rule match-type="regex">
+		<from>/img/(.*)$</from>
+		<to last="true" type="forward">/img/$1</to>
+	</rule>
+	<rule match-type="regex">
+		<from>/template/(.*)$</from>
+		<to last="true" type="forward">/template/$1</to>
+	</rule>
+	<rule match-type="wildcard">
+		<from>/**</from>
+		<to>/index.html</to>
+	</rule>
+</urlrewrite>
