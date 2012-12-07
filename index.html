@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Apps : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Apps</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/bertrandcedric/apps">View on GitHub</a>
+
+          <h1 id="project_title">Apps</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/bertrandcedric/apps/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/bertrandcedric/apps/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>MongoDB-backed Session State Sample</h1>
+
+<h2>Run Locally</h2>
+
+<h3>Build the project with Maven:</h3>
+
+<pre><code>mvn package
+</code></pre>
+
+<h3>Configure the <code>MONGOHQ_URL</code> environment variable to point to a local MongoDB instance:</h3>
+
+<ul>
+<li>
+<p>Linux/Mac</p>
+
+<pre><code>export MONGOHQ_URL=localhost:27017,localhost:27018,localhost:27019
+</code></pre>
+</li>
+<li>
+<p>Windows</p>
+
+<pre><code>set MONGOHQ_URL=localhost:27017,localhost:27018,localhost:27019
+</code></pre>
+</li>
+</ul><h3>Run</h3>
+
+<p>Now you can run your webapp with:</p>
+
+<ul>
+<li>
+<p>Linux/Mac</p>
+
+<pre><code>$ sh target/bin/webapp
+</code></pre>
+</li>
+<li>
+<p>Windows</p>
+
+<pre><code>$ target\bin\webapp.bat
+</code></pre>
+</li>
+</ul><h3>Try the application in your browser by navigating to:</h3>
+
+<pre><code>http://localhost:8080/
+</code></pre>
+
+<h2>Run on Heroku</h2>
+
+<h3>Install the <a href="http://toolbelt.heroku.com">Heroku Toolbelt</a>
+</h3>
+
+<h3>Login to Heroku from the command line</h3>
+
+<pre><code>heroku login
+</code></pre>
+
+<p>In the root directory of this project do the following:</p>
+
+<h3>Create the app on Heroku with the "cedar" stack and the free MongoHQ add-on</h3>
+
+<pre><code>heroku create --stack cedar --addons mongohq:free
+</code></pre>
+
+<h3>Deploy to Heroku</h3>
+
+<pre><code>git push heroku master
+</code></pre>
+
+<h3>Open the application in your browser</h3>
+
+<pre><code>heroku open
+
+heroku scale web=2
+
+heroku ps
+
+heroku scale web=0
+
+heroku logs
+</code></pre>
+
+<h1></h1>
+
+<h1>mongodb</h1>
+
+<h1></h1>
+
+<h1>apps</h1>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Apps maintained by <a href="https://github.com/bertrandcedric">bertrandcedric</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
