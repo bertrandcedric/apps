@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 
 import fr.bertrand.cedric.model.CountHolder;
 
-
 @Path("/")
 @Produces({ APPLICATION_JSON })
 public class Resource {
@@ -21,12 +20,7 @@ public class Resource {
 	@Path("/get")
 	public Response doGet(@Context HttpServletRequest req) {
 		HttpSession session = req.getSession();
-		CountHolder count;
-		if (session.getAttribute("count") != null) {
-			count = (CountHolder) session.getAttribute("count");
-		} else {
-			count = new CountHolder();
-		}
+		CountHolder count = session.getAttribute("count") != null ? (CountHolder) session.getAttribute("count") : new CountHolder();
 		count.count++;
 		session.setAttribute("count", count);
 		return Response.ok(count).build();

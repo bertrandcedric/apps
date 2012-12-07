@@ -1,6 +1,7 @@
 package fr.bertrand.cedric;
 
-import java.util.ArrayList;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -12,8 +13,12 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 import com.mongodb.ReadPreference;
@@ -21,11 +26,13 @@ import com.mongodb.ServerAddress;
 
 public class Main {
 
+	private final static String webappDirLocation = "src/main/webapp/";
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
 	public static void main(String[] args) throws Exception {
 		LogManager.getLogManager().reset();
 		SLF4JBridgeHandler.install();
-
-		String webappDirLocation = "src/main/webapp/";
 
 		String webPort = System.getenv("PORT");
 		if (StringUtil.nonNull(webPort).equals("")) {
@@ -33,37 +40,64 @@ public class Main {
 		}
 
 		Server server = new Server(Integer.valueOf(webPort));
-
-		List<ServerAddress> addr = new ArrayList<ServerAddress>();
-		for (String s : System.getenv("MONGOHQ_URL").split(",")) {
-			addr.add(new ServerAddress(s));
-		}
-		Mongo mongo = new Mongo(addr);
-		mongo.setReadPreference(ReadPreference.secondaryPreferred());
-
-		Random rand = new Random((new Date()).getTime());
-		int workerNum = 1000 + rand.nextInt(8999);
-
-		final DB db = mongo.getDB("test");
-		db.authenticate("", "".toCharArray());
-		MongoSessionIdManager idMgr = new MongoSessionIdManager(server, db.getCollection("sessions"));
-		idMgr.setWorkerName(String.valueOf(workerNum));
-		server.setSessionIdManager(idMgr);
+		server.setSessionIdManager(getMongoSessionIdManager(server, getDb(getMongodb(getServerAddress()))));
 
 		SessionHandler sessionHandler = new SessionHandler();
-		MongoSessionManager mongoMgr = new MongoSessionManager();
-		mongoMgr.setSessionIdManager(server.getSessionIdManager());
-		sessionHandler.setSessionManager(mongoMgr);
+		sessionHandler.setSessionManager(getMongoSessionManager(server));
 
+		server.setHandler(setWebAppContext(sessionHandler));
+
+		server.start();
+		server.join();
+	}
+
+	private static WebAppContext setWebAppContext(SessionHandler sessionHandler) {
 		WebAppContext root = new WebAppContext();
 		root.setSessionHandler(sessionHandler);
 		root.setContextPath("/");
 		root.setDescriptor(webappDirLocation + "/WEB-INF/web.xml");
 		root.setResourceBase(webappDirLocation);
 		root.setParentLoaderPriority(true);
-		server.setHandler(root);
+		return root;
+	}
 
-		server.start();
-		server.join();
+	private static MongoSessionManager getMongoSessionManager(Server server) throws UnknownHostException {
+		MongoSessionManager mongoMgr = new MongoSessionManager();
+		mongoMgr.setSessionIdManager(server.getSessionIdManager());
+		return mongoMgr;
+	}
+
+	private static MongoSessionIdManager getMongoSessionIdManager(Server server, DB db) {
+		Random rand = new Random((new Date()).getTime());
+		int workerNum = 1000 + rand.nextInt(8999);
+		MongoSessionIdManager idMgr = new MongoSessionIdManager(server, db.getCollection("sessions"));
+		idMgr.setWorkerName(String.valueOf(workerNum));
+		return idMgr;
+	}
+
+	private static Mongo getMongodb(List<ServerAddress> serveAddress) {
+		Mongo mongo = new Mongo(serveAddress);
+		mongo.setReadPreference(ReadPreference.secondaryPreferred());
+		return mongo;
+	}
+
+	private static DB getDb(Mongo mongo) {
+		final DB db = mongo.getDB("test");
+		db.authenticate("", "".toCharArray());
+		return db;
+	}
+
+	private static List<ServerAddress> getServerAddress() {
+		return Lists.transform(Arrays.asList(System.getenv("MONGOHQ_URL").split(",")), new Function<String, ServerAddress>() {
+			@Override
+			public ServerAddress apply(String address) {
+				try {
+					return new ServerAddress(address);
+				} catch (UnknownHostException e) {
+					LOGGER.error(e.getMessage());
+					return null;
+				}
+			}
+		});
 	}
 }
