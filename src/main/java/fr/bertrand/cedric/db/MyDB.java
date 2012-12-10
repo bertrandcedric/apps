@@ -25,14 +25,18 @@ public class MyDB {
 	private MyDB() {
 	}
 
-	public static DB getInstance() throws UnknownHostException {
+	public static DB getInstance() {
 		if (db == null) {
-			MongoURI mongoURI = new MongoURI(System.getenv("MONGOHQ_URL"));
-			db = mongoURI.connectDB();
+			try {
+				MongoURI mongoURI = new MongoURI(System.getenv("MONGOHQ_URL"));
+				db = mongoURI.connectDB();
+				if (mongoURI.getUsername() != null) {
+					db.authenticate(mongoURI.getUsername(), mongoURI.getPassword());
+				}
+			} catch (UnknownHostException e) {
+				LOGGER.error(e.getMessage());
+			}
 	 
-	        if (mongoURI.getUsername() != null) {
-	            db.authenticate(mongoURI.getUsername(), mongoURI.getPassword());
-	        }
 //			Mongo mongo = new Mongo(getServerAddress());
 //			mongo.setReadPreference(ReadPreference.secondaryPreferred());
 //			db = mongo.getDB("test");
