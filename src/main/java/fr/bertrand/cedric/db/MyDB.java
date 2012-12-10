@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
+import com.mongodb.MongoURI;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 
@@ -24,12 +25,18 @@ public class MyDB {
 	private MyDB() {
 	}
 
-	public static DB getInstance() {
+	public static DB getInstance() throws UnknownHostException {
 		if (db == null) {
-			Mongo mongo = new Mongo(getServerAddress());
-			mongo.setReadPreference(ReadPreference.secondaryPreferred());
-			db = mongo.getDB("test");
-			db.authenticate("", "".toCharArray());
+			MongoURI mongoURI = new MongoURI(System.getenv("MONGOHQ_URL"));
+			db = mongoURI.connectDB();
+	 
+	        if (mongoURI.getUsername() != null) {
+	            db.authenticate(mongoURI.getUsername(), mongoURI.getPassword());
+	        }
+//			Mongo mongo = new Mongo(getServerAddress());
+//			mongo.setReadPreference(ReadPreference.secondaryPreferred());
+//			db = mongo.getDB("test");
+//			db.authenticate("", "".toCharArray());
 		}
 		return db;
 	}
