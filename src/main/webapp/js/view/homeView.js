@@ -14,7 +14,7 @@ function( $       , renderTemplate       , Backbone  , template                 
 		
 		render: function() {
 			this.$el.html(renderTemplate(template, {
-				sessionID: this.model.toJSON().count
+				count: this.model.toJSON().count
 			}));
 		}
 	});
