@@ -2,6 +2,8 @@ package fr.bertrand.cedric.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
@@ -10,6 +12,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import com.mongodb.DBObject;
+
+import fr.bertrand.cedric.db.MyDB;
 import fr.bertrand.cedric.model.CountHolder;
 
 @Path("/")
@@ -24,5 +29,12 @@ public class Resource {
 		count.count++;
 		session.setAttribute("count", count);
 		return Response.ok(count).build();
+	}
+
+	@GET
+	@Path("/all")
+	public Response all(@Context HttpServletRequest req) {
+		final List<DBObject> array = MyDB.getInstance().getCollection(MyDB.SESSIONS).find().toArray();
+		return Response.ok(array).build();
 	}
 }

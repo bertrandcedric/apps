@@ -1,9 +1,7 @@
 package fr.bertrand.cedric;
 
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.logging.LogManager;
 
@@ -17,12 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.mongodb.DB;
-import com.mongodb.Mongo;
-import com.mongodb.ReadPreference;
-import com.mongodb.ServerAddress;
+
+import fr.bertrand.cedric.db.MyDB;
 
 public class Main {
 
@@ -40,12 +35,13 @@ public class Main {
 		}
 
 		Server server = new Server(Integer.valueOf(webPort));
-		server.setSessionIdManager(getMongoSessionIdManager(server, getDb(getMongodb(getServerAddress()))));
+		server.setSessionIdManager(getMongoSessionIdManager(server, MyDB.getInstance()));
 
 		SessionHandler sessionHandler = new SessionHandler();
 		sessionHandler.setSessionManager(getMongoSessionManager(server));
 
-		server.setHandler(setWebAppContext(sessionHandler));
+		final WebAppContext webAppContext = setWebAppContext(sessionHandler);
+		server.setHandler(webAppContext);
 
 		server.start();
 		server.join();
@@ -70,34 +66,8 @@ public class Main {
 	private static MongoSessionIdManager getMongoSessionIdManager(Server server, DB db) {
 		Random rand = new Random((new Date()).getTime());
 		int workerNum = 1000 + rand.nextInt(8999);
-		MongoSessionIdManager idMgr = new MongoSessionIdManager(server, db.getCollection("sessions"));
+		MongoSessionIdManager idMgr = new MongoSessionIdManager(server, db.getCollection(MyDB.SESSIONS));
 		idMgr.setWorkerName(String.valueOf(workerNum));
 		return idMgr;
-	}
-
-	private static Mongo getMongodb(List<ServerAddress> serveAddress) {
-		Mongo mongo = new Mongo(serveAddress);
-		mongo.setReadPreference(ReadPreference.secondaryPreferred());
-		return mongo;
-	}
-
-	private static DB getDb(Mongo mongo) {
-		final DB db = mongo.getDB("test");
-		db.authenticate("", "".toCharArray());
-		return db;
-	}
-
-	private static List<ServerAddress> getServerAddress() {
-		return Lists.transform(Arrays.asList(System.getenv("MONGOHQ_URL").split(",")), new Function<String, ServerAddress>() {
-			@Override
-			public ServerAddress apply(String address) {
-				try {
-					return new ServerAddress(address);
-				} catch (UnknownHostException e) {
-					LOGGER.error(e.getMessage());
-					return null;
-				}
-			}
-		});
 	}
 }
