@@ -1,19 +1,13 @@
 package fr.bertrand.cedric.db;
 
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.mongodb.DB;
-import com.mongodb.Mongo;
 import com.mongodb.MongoURI;
 import com.mongodb.ReadPreference;
-import com.mongodb.ServerAddress;
 
 public class MyDB {
 
@@ -29,33 +23,15 @@ public class MyDB {
 		if (db == null) {
 			try {
 				MongoURI mongoURI = new MongoURI(System.getenv("MONGOHQ_URL"));
+				mongoURI.getOptions().setReadPreference(ReadPreference.secondaryPreferred());
 				db = mongoURI.connectDB();
 				if (mongoURI.getUsername() != null) {
 					db.authenticate(mongoURI.getUsername(), mongoURI.getPassword());
 				}
 			} catch (UnknownHostException e) {
-				LOGGER.error(e.getMessage());
+				LOGGER.error(e.getMessage(), e);
 			}
-	 
-//			Mongo mongo = new Mongo(getServerAddress());
-//			mongo.setReadPreference(ReadPreference.secondaryPreferred());
-//			db = mongo.getDB("test");
-//			db.authenticate("", "".toCharArray());
 		}
 		return db;
-	}
-
-	private static List<ServerAddress> getServerAddress() {
-		return Lists.transform(Arrays.asList(System.getenv("MONGOHQ_URL").split(",")), new Function<String, ServerAddress>() {
-			@Override
-			public ServerAddress apply(String address) {
-				try {
-					return new ServerAddress(address);
-				} catch (UnknownHostException e) {
-					LOGGER.error(e.getMessage());
-					return null;
-				}
-			}
-		});
 	}
 }

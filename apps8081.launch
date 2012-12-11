@@ -7,7 +7,7 @@
 <listEntry value="1"/>
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-<mapEntry key="MONGOHQ_URL" value="localhost:27017,localhost:27018,localhost:27019"/>
+<mapEntry key="MONGOHQ_URL" value="mongodb://localhost:27017,localhost:27018,localhost:27019/apps"/>
 <mapEntry key="PORT" value="8081"/>
 </mapAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
