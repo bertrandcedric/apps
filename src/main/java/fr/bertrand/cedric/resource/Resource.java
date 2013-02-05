@@ -1,8 +1,8 @@
 package fr.bertrand.cedric.resource;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
-import java.util.List;
+import com.mongodb.DBObject;
+import fr.bertrand.cedric.db.MyDB;
+import fr.bertrand.cedric.model.CountHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,11 +11,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
-import com.mongodb.DBObject;
-
-import fr.bertrand.cedric.db.MyDB;
-import fr.bertrand.cedric.model.CountHolder;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("/")
 @Produces({ APPLICATION_JSON })

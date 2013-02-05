@@ -1,13 +1,12 @@
 package fr.bertrand.cedric.db;
 
-import java.net.UnknownHostException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.mongodb.DB;
 import com.mongodb.MongoURI;
 import com.mongodb.ReadPreference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.UnknownHostException;
 
 public class MyDB {
 

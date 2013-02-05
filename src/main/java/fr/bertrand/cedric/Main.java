@@ -1,8 +1,7 @@
 package fr.bertrand.cedric;
 
-import java.net.UnknownHostException;
-import java.util.logging.LogManager;
-
+import com.mongodb.DB;
+import fr.bertrand.cedric.db.MyDB;
 import org.eclipse.jetty.nosql.mongodb.MongoSessionIdManager;
 import org.eclipse.jetty.nosql.mongodb.MongoSessionManager;
 import org.eclipse.jetty.server.Server;
@@ -11,17 +10,16 @@ import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.mongodb.DB;
-
-import fr.bertrand.cedric.db.MyDB;
+import java.net.UnknownHostException;
+import java.util.logging.LogManager;
 
 public class Main {
 
-	private final static String webappDirLocation = "src/main/webapp/";
+    private final static String webappDirLocation = "src/main/webapp/";
 
 	public static void main(String[] args) throws Exception {
-		LogManager.getLogManager().reset();
-		SLF4JBridgeHandler.install();
+        LogManager.getLogManager().reset();
+        SLF4JBridgeHandler.install();
 
 		String webPort = System.getenv("PORT");
 		if (StringUtil.nonNull(webPort).equals("")) {

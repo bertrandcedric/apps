@@ -1,13 +1,12 @@
 package fr.bertrand.cedric;
 
-import static org.fest.assertions.Assertions.assertThat;
-
-import org.junit.Test;
-
 import com.foursquare.fongo.Fongo;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import org.junit.Test;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 public class TestJongo {
 	@Test
